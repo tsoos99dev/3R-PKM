@@ -1,0 +1,94 @@
+Notebook[{Cell[
+BoxData[""],"Input",CellLabel -> "In[237]:= ",ExpressionUUID -> "ef102657-1684-446a-b006-8ad593d8fcfc"],Cell[
+BoxData[
+RowBox[{RowBox[{"(*",RowBox[{"Test"," ","func"}],"*)"}],"\n",RowBox[{"(*",RowBox[
+{"side_",":"," ",RowBox[{"Triangle"," ","side"," ","length"}]}]," ","*)"}],"\n",RowBox[
+{"(*",RowBox[{"trans_",":"," ",RowBox[{"2","D"," ","vector"}]}]," ","*)"}],"\n",RowBox[
+{"(*",RowBox[{"rot_",":"," ","Angle"}]," ","*)"}],"\n",RowBox[{RowBox[{RowBox[{RowBox[
+{"createMeasurementPoints","[",RowBox[{"side_",","," ","trans_",","," ","rot_"}],"]"}]," ",":=",RowBox[
+{"Module","[",RowBox[{RowBox[{"{",RowBox[{"localPoints",","," ","transform",","," ","measure",","," ","sides",","," ","transformedPoints"}],"}"}],",","\n",RowBox[
+{RowBox[{"localPoints"," ","="," ",RowBox[{"Array","[",RowBox[{RowBox[{RowBox[{RowBox[
+{"RotationTransform","[",RowBox[{"#"," ","*"," ","120","\[Degree]"}],"]"}],"[",RowBox[
+{"{",RowBox[{"0",","," ",RowBox[{"side","/",RowBox[{"\[Sqrt]","3"}]}]}],"}"}],"]"}]," ","&"}],","," ","3"}],"]"}]}],";","\n",RowBox[
+{"transform"," ","=",RowBox[{RowBox[{"TranslationTransform","[","trans","]"}],".",RowBox[
+{"RotationTransform","[","rot"," ","]"}]}]}],";"," ","\n",RowBox[{"transformedPoints"," ","="," ",RowBox[
+{"transform","[","localPoints","]"}]}],";","\n",RowBox[{"measure"," ","="," ",RowBox[
+{"Interpolation","[",RowBox[{RowBox[{"Array","[",RowBox[{RowBox[{RowBox[{"{",RowBox[
+{RowBox[{"#","-","1"}],","," ",RowBox[{"transformedPoints","[",RowBox[{"[",RowBox[
+{RowBox[{"Mod","[",RowBox[{"#"," ",","," ","3"}],"]"}],"+","1"}]," ","]"}],"]"}]}],"}"}],"&"}],","," ","4"}],"]"}],","," ",RowBox[
+{"InterpolationOrder"," ","\[Rule]","1"}]}],"]"}]}],";","\n",RowBox[{"sides"," ","="," ",RowBox[
+{"Array","[",RowBox[{RowBox[{RowBox[{"measure","@",RowBox[{"RandomReal","[",RowBox[
+{RowBox[{"{",RowBox[{RowBox[{"#","-","1"}],","," ","#"}],"}"}],","," ","2"}],"]"}]}],"&"}],",","3"}],"]"}]}],";","\n",RowBox[
+{"Return","[","sides","]"}],";"}]}],"\n","]"}]}],";"}],"\n"}]}]],"Input",CellLabel -> "In[238]:= ",
+ExpressionUUID -> "e270cf46-305f-4a19-a317-98eb1c43c79c"],Cell[
+BoxData[RowBox[{RowBox[
+{"(*",RowBox[{RowBox[{"Compute"," ","hole"," ","coordinates"," ","from"," ","6"," ","measurement"," ","points"}],","," ",RowBox[
+{"2"," ","for"," ","each"," ","side"}]}],"*)"}],"\n",RowBox[{"(*",RowBox[{"dist_",":"," ",RowBox[
+{"Hole"," ","distance"}]}]," ","*)"}],"\n",RowBox[{"(*",RowBox[{"points_",":"," ",RowBox[
+{"3"," ","x"," ","2"," ","array"," ","of"," ","2","D"," ","points"}]}]," ","*)"}],"\n",RowBox[
+{RowBox[{RowBox[{"getHoles","[",RowBox[{"dist_",","," ","points_"}],"]"}]," ",":="," ",RowBox[
+{"Module","[",RowBox[{RowBox[{"{",RowBox[{"eqs",","," ","sol",","," ","vertices",","," ","origin",","," ","yAxis",","," ","xAxis",","," ","holes"}],"}"}],",","\n",RowBox[
+{RowBox[{"eqs"," ","="," ",RowBox[{"Map","[",RowBox[{RowBox[{RowBox[{RowBox[{RowBox[
+{RowBox[{"RotationTransform","[",RowBox[{"90","\[Degree]"}],"]"}],"[",RowBox[{RowBox[
+{"#","[",RowBox[{"[","1","]"}],"]"}],"-",RowBox[{"#","[",RowBox[{"[","2","]"}],"]"}]}],"]"}],".",RowBox[
+{"(",RowBox[{RowBox[{"{",RowBox[{"x",","," ","y"}],"}"}],"-",RowBox[{"#","[",RowBox[
+{"[","2","]"}],"]"}]}],")"}]}]," ","=="," ","0"}]," ","&"}],","," ","points"}],"]"}]}],";","\n",RowBox[
+{"sol"," ","=",RowBox[{RowBox[{RowBox[{"Solve","[",RowBox[{"#",","," ",RowBox[{"{",RowBox[
+{"x",","," ","y"}],"}"}]}],"]"}],"&"}],"/@",RowBox[{"Partition","[",RowBox[{"eqs",","," ","2",","," ","1",","," ","1"}],"]"}]}]}],";","\n",RowBox[
+{"vertices"," ","="," ",RowBox[{RowBox[{RowBox[{"(",RowBox[{RowBox[{"{",RowBox[{"x",",","y"}],"}"}]," ","/.","#"}],")"}]," ","&"}],"/@"," ",RowBox[
+{"Flatten","[",RowBox[{"sol",","," ","1"}],"]"}]}]}],";","\n",RowBox[{"origin"," ","="," ",RowBox[
+{RowBox[{"Plus"," ","@@","vertices"}]," ","/"," ","3"}]}],";","\n",RowBox[{"yAxis"," ","="," ",RowBox[
+{RowBox[{"vertices","[",RowBox[{"[","1","]"}],"]"}]," ","-"," ","origin"}]}],";","\n",RowBox[
+{"xAxis"," ","="," ",RowBox[{RowBox[{"RotationTransform","[",RowBox[{RowBox[{"-","90"}],"\[Degree]"}],"]"}],"[","yAxis","]"}]}],";","\n",RowBox[
+{"holes","  ","="," ",RowBox[{"Array","[",RowBox[{RowBox[{RowBox[{RowBox[{RowBox[
+{"RotationTransform","[",RowBox[{"#","*","120","\[Degree]"}],"]"}],"[",RowBox[{RowBox[
+{"dist","/",RowBox[{"\[Sqrt]","3"}]}],"*",RowBox[{"Normalize","[","yAxis","]"}]}],"]"}],"+","origin"}]," ","&"}],","," ","3"}],"]"}]}],";","\n",RowBox[
+{"Return","[",RowBox[{"{",RowBox[{"origin",","," ","vertices",",","holes"}],"}"}],"]"}],";"}]}],"\n","]"}]}],";"}]}]],
+"Input",CellLabel -> "In[239]:= ",ExpressionUUID -> "769d165c-3597-4c5a-9a69-8d7f938f7f7f"],Cell[
+BoxData[
+""],"Input",CellLabel -> "In[240]:= ",ExpressionUUID -> "6074a06a-98bf-4edd-9a11-b483c37a5ef2"],Cell[
+CellGroupData[
+{Cell[
+BoxData[{RowBox[{RowBox[{"(*",RowBox[{RowBox[{"translation"," ","="," ",RowBox[
+{"{",RowBox[{RowBox[{"RandomReal","[",RowBox[{"{",RowBox[{RowBox[{"-","100"}],","," ","100"}],"}"}],"]"}],","," ",RowBox[
+{"RandomReal","[",RowBox[{"{",RowBox[{RowBox[{"-","100"}],","," ","100"}],"}"}],"]"}]}],"}"}]}],";","\n",RowBox[
+{"rotation"," ","="," ",RowBox[{"RandomReal","[",RowBox[{"{",RowBox[{"0",","," ","360"}],"}"}],"]"}]}],";","\n",RowBox[
+{"points"," ","="," ",RowBox[{"createMeasurementPoints","[",RowBox[{"380",","," ","translation",","," ","rotation"}],"]"}]}]}],"*)"}],"\n",RowBox[
+{"points","=",RowBox[{"{","\n",RowBox[{RowBox[{"{",RowBox[{RowBox[{"{",RowBox[{"12.76",",",RowBox[
+{"-","34.81"}]}],"}"}],",",RowBox[{"{",RowBox[{"65.13",",",RowBox[{"-","138.175"}]}],"}"}]}],"}"}],",","\n",RowBox[
+{"{",RowBox[{RowBox[{"{",RowBox[{"153.18",",",RowBox[{"-","138.175"}]}],"}"}],",",RowBox[
+{"{",RowBox[{"232.555",",",RowBox[{"-","16.58"}]}],"}"}]}],"}"}],",","\n",RowBox[
+{"{",RowBox[{RowBox[{"{",RowBox[{"275.59",",","124.315"}],"}"}],",",RowBox[{"{",RowBox[
+{"222.64",",","126.82"}],"}"}]}],"}"}]}],"\n","}"}]}]}],RowBox[{"\n","\n"}],RowBox[
+{RowBox[{"{",RowBox[{"center",","," ","vertices",","," ","holes"}],"}"}]," ","="," ",RowBox[
+{"getHoles","[",RowBox[{"250",","," ","points"}],"]"}]}],RowBox[{"\n","\n"}],RowBox[
+{"Graphics","[",RowBox[{RowBox[{"{",RowBox[{RowBox[{"PointSize","[","0.02","]"}],","," ","Gray",",",RowBox[
+{"Point","[",RowBox[{"Flatten","[",RowBox[{"points",","," ","1"}],"]"}],"]"}],","," ",RowBox[
+{"Point","[","center","]"}],",","Red",","," ",RowBox[{"Point","[","holes","]"}],","," ",RowBox[
+{"Opacity","[","0.2","]"}],","," ","Blue",","," ",RowBox[{"EdgeForm","[","Thick","]"}]," ",",",RowBox[
+{"Triangle","[","vertices","]"}]}],"}"}],","," ",RowBox[{"Axes","\[Rule]","True"}],","," ",RowBox[
+{"GridLines","\[Rule]","Automatic"}]}],"]"}]}],"Input",CellLabel -> "In[244]:= ",
+ExpressionUUID -> "295937e9-5a22-4621-86f5-0b8a4836776f"],Cell[
+BoxData[RowBox[{"{",RowBox[
+{RowBox[{"{",RowBox[{RowBox[{"{",RowBox[{"12.76`",",",RowBox[{"-","34.81`"}]}],"}"}],",",RowBox[
+{"{",RowBox[{"65.13`",",",RowBox[{"-","138.175`"}]}],"}"}]}],"}"}],",",RowBox[{"{",RowBox[
+{RowBox[{"{",RowBox[{"153.18`",",",RowBox[{"-","138.175`"}]}],"}"}],",",RowBox[{"{",RowBox[
+{"232.555`",",",RowBox[{"-","16.58`"}]}],"}"}]}],"}"}],",",RowBox[{"{",RowBox[{RowBox[
+{"{",RowBox[{"275.59`",",","124.315`"}],"}"}],",",RowBox[{"{",RowBox[{"222.64`",",","126.82`"}],"}"}]}],"}"}]}],"}"}],
+StandardForm],"Output",CellLabel -> "Out[244]= ",ExpressionUUID -> "f84307ba-de8b-4b2b-b72e-cdf7d1d43328"],Cell[
+BoxData[
+RowBox[{"{",RowBox[{RowBox[{"{",RowBox[{"116.79121763159765`",",","16.304698146644686`"}],"}"}],",",RowBox[
+{"{",RowBox[{RowBox[{"{",RowBox[{"103.60625389512701`",",",RowBox[{"-","214.1172948991752`"}]}],"}"}],",",RowBox[
+{"{",RowBox[{"323.06262394926756`",",","122.06912798880238`"}],"}"}],",",RowBox[{"{",RowBox[
+{RowBox[{"-","76.29522494960162`"}],",","140.96226135030687`"}],"}"}]}],"}"}],",",RowBox[
+{"{",RowBox[{RowBox[{"{",RowBox[{"245.70990085046327`",",","81.21468544018147`"}],"}"}],",",RowBox[
+{"{",RowBox[{RowBox[{"-","3.881821933363142`"}],",","95.49655918985253`"}],"}"}],",",RowBox[
+{"{",RowBox[{"108.54557397769281`",",",RowBox[{"-","127.79715019009996`"}]}],"}"}]}],"}"}]}],"}"}],
+StandardForm],"Output",CellLabel -> "Out[245]= ",ExpressionUUID -> "3327b04b-906c-4d3c-874d-afa5fb4d730a"],Cell[
+BoxData[
+GraphicsBox[{PointSize[0.02`],GrayLevel[0.5`],PointBox[{{12.76`,-34.81`},{65.13`,-138.175`},{153.18`,-138.175`},{232.555`,-16.58`},{275.59`,124.315`},{222.64`,126.82`}}],PointBox[
+{116.79121763159765`,16.304698146644686`}],RGBColor[1,0,0],PointBox[{{245.70990085046327`,81.21468544018147`},{-3.881821933363142`,95.49655918985253`},{108.54557397769281`,-127.79715019009996`}}],Opacity[
+0.2`],RGBColor[0,0,1],EdgeForm[Thickness[Large]],TagBox[PolygonBox[{{103.60625389512701`,-214.1172948991752`},{323.06262394926756`,122.06912798880238`},{-76.29522494960162`,140.96226135030687`}}],
+"Triangle"]},Axes -> True,GridLines -> Automatic],StandardForm],"Output",CellLabel -> "Out[246]= ",
+ExpressionUUID -> "9efe0d3e-9d43-4f77-ae23-da48d56cf5c1"]},Open],ExpressionUUID -> "6189b678-5ce4-40cc-8f34-9e407820a658"]},
+StyleDefinitions -> "Default.nb",FrontEndVersion -> "13.1 for Wolfram Cloud 1.63.0.1 (July 14, 2022)"]
