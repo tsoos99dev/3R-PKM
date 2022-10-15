@@ -13,9 +13,9 @@
   </p>
 </div>
 
-:warning: **The project is still in progress**
-
 ## About The Project
+
+> :warning: **The project is still in progress**
 
 ## Roadmap
 
