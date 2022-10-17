@@ -1,2 +1,4 @@
 
 .DS_Store
+/electronics/controller.X/build/
+/electronics/controller.X/dist/

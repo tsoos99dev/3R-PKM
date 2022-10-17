@@ -1,6 +1,6 @@
+.generated_files/
 build/
 dist/
-.generated_files/
 nbproject/Makefile-*
 nbproject/Package-*
 private/
