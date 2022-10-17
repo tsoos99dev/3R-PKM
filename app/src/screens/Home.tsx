@@ -1,31 +1,31 @@
-import React, {type PropsWithChildren} from 'react';
+import React from 'react';
+import { View, ScrollView } from 'react-native';
 import {
   Button,
-  ScrollView,
   Text,
-  View,
-} from 'react-native';
+  Surface,
+  useTheme
+} from 'react-native-paper';
 
 const HomeScreen = () => {
-  
+    const theme = useTheme()
     return (
-      <View style={{
-          height: '100%'
+        <View style={{
+            backgroundColor: theme.colors.background,
+            height: '100%'
         }}>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic">
-          <View>
-            <Text>3R PKM</Text>
-            <Button
-              onPress={() => {
-                
-              }}
-              title="Press Me"
-            />
-          </View>
-        </ScrollView>
-      </View>
+            <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <Button mode="contained" onPress={() => console.log('Pressed')}>
+                    CONNECT
+                </Button>
+            </View>
+        </View>
     );
-  };
+};
+
   
-  export default HomeScreen;
+export default HomeScreen;
