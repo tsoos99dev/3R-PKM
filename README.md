@@ -19,5 +19,13 @@
 
 ## Roadmap
 
-
-
+- [x] CAD Modeling
+- [x] Kinemtics calculations
+- [ ] Electronics design
+  - [x] Motor controller board
+  - [ ] Wifi controller software
+  - [ ] Motor controller software
+- [ ] App development
+- [ ] Manufacturing the base
+- [ ] 3D Printing parts
+- [ ] Robot assembly
