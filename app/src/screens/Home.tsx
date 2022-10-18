@@ -1,14 +1,17 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import {
   Button,
   Text,
-  Surface,
   useTheme
 } from 'react-native-paper';
+import { StackNavigation } from '../../App';
 
 const HomeScreen = () => {
     const theme = useTheme()
+    const navigation = useNavigation<StackNavigation>();
+
     return (
         <View style={{
             backgroundColor: theme.colors.background,
@@ -17,9 +20,19 @@ const HomeScreen = () => {
             <View style={{
                 flex: 1,
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginVertical: 16
             }}>
-                <Button mode="contained" onPress={() => console.log('Pressed')}>
+                <View style={{
+                    
+                }}>
+                    <Text variant='headlineLarge'>CONNECT TO ROBOT</Text>
+                    <Text variant='bodyMedium'>
+                        Please make sure your device is connected to 
+                        the robot's Wi-Fi
+                    </Text>
+                </View>
+                <Button mode="contained" onPress={() => navigation.navigate('Details')}>
                     CONNECT
                 </Button>
             </View>

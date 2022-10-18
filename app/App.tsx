@@ -1,6 +1,11 @@
 import React from 'react';
-import { Appbar, MD3DarkTheme as DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+import { Appbar, MD3DarkTheme as DefaultTheme, Provider as PaperProvider, Text } from 'react-native-paper';
 import HomeScreen from './src/screens/Home';
+import { View } from 'react-native';
 
 const theme = {
   ...DefaultTheme,
@@ -20,15 +25,58 @@ const theme = {
   }
 }
 
+export type RootStackParamList = {
+  Home: undefined;
+  Details: undefined;
+};
+
+export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;
+export type StackNavigationProps = {
+  navigation: StackNavigation;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function CustomNavigationBar({options, navigation, back}: any) {
+  return (
+    <Appbar.Header>
+      {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+      <Appbar.Content title={options.title} />
+    </Appbar.Header>
+  );
+}
+
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  );
+}
+
 const App = () => {
   return (
-    <PaperProvider theme={theme}>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => {}} />
-        <Appbar.Content title="3R PKM" />
-      </Appbar.Header>
-      <HomeScreen/>
-    </PaperProvider>
+    <NavigationContainer>
+      <PaperProvider theme={theme}>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            header: (props) => <CustomNavigationBar {...props} />
+          }}
+        >
+          <Stack.Screen 
+            name="Home" 
+            component={HomeScreen}
+            options={{ title: 'Home' }}
+          />
+          <Stack.Screen 
+            name="Details" 
+            component={DetailsScreen} 
+            options={{ title: 'Details' }}
+          />
+        </Stack.Navigator>
+      </PaperProvider>
+    </NavigationContainer>
   );
 };
 
