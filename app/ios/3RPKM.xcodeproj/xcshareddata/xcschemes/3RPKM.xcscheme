@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "hmi.app"
-               BlueprintName = "hmi"
-               ReferencedContainer = "container:hmi.xcodeproj">
+               BuildableName = "3RPKM.app"
+               BlueprintName = "3RPKM"
+               ReferencedContainer = "container:3RPKM.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "hmiTests.xctest"
-               BlueprintName = "hmiTests"
-               ReferencedContainer = "container:hmi.xcodeproj">
+               BuildableName = "3RPKMTests.xctest"
+               BlueprintName = "3RPKMTests"
+               ReferencedContainer = "container:3RPKM.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "hmi.app"
-            BlueprintName = "hmi"
-            ReferencedContainer = "container:hmi.xcodeproj">
+            BuildableName = "3RPKM.app"
+            BlueprintName = "3RPKM"
+            ReferencedContainer = "container:3RPKM.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "hmi.app"
-            BlueprintName = "hmi"
-            ReferencedContainer = "container:hmi.xcodeproj">
+            BuildableName = "3RPKM.app"
+            BlueprintName = "3RPKM"
+            ReferencedContainer = "container:3RPKM.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
