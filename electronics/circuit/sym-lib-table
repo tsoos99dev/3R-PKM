@@ -2,4 +2,6 @@
   (lib (name "Stepper Driver")(type "Legacy")(uri "${KIPRJMOD}/lib/A4988_STEPPER_MOTOR_DRIVER_CARRIER/A4988_STEPPER_MOTOR_DRIVER_CARRIER.lib")(options "")(descr ""))
   (lib (name "Shift Register")(type "Legacy")(uri "${KIPRJMOD}/lib/SN74HC595N/SN74HC595N.lib")(options "")(descr ""))
   (lib (name "Voltage Regulator")(type "Legacy")(uri "${KIPRJMOD}/lib/LD1117V33/LD1117V33.lib")(options "")(descr ""))
+  (lib (name "IR Sensor")(type "Legacy")(uri "${KIPRJMOD}/lib/TCRT5000/TCRT5000.lib")(options "")(descr ""))
+  (lib (name "Inverter IC")(type "Legacy")(uri "${KIPRJMOD}/lib/74HC14D/74HC14D.lib")(options "")(descr ""))
 )
