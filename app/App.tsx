@@ -21,7 +21,8 @@ const theme = {
     onSurface: '#fff',
     surfaceVariant: '#424242',
     onSurfaceVariant: 'rgba(255, 255, 255, 0.7)',
-    backdrop: '#000'
+    backdrop: '#000',
+    textSecondary: 'rgba(255, 255, 255, 0.7)'
   }
 }
 
@@ -67,7 +68,7 @@ const App = () => {
           <Stack.Screen 
             name="Home" 
             component={HomeScreen}
-            options={{ title: 'Home' }}
+            options={{ title: 'Find device' }}
           />
           <Stack.Screen 
             name="Details" 
