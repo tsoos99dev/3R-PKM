@@ -4,8 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Appbar, MD3DarkTheme as DefaultTheme, Provider as PaperProvider, Text } from 'react-native-paper';
-import HomeScreen from './src/screens/Home';
+import FindDeviceScreen from './src/screens/FindDevice';
 import { View } from 'react-native';
+import { useRobot } from './src/robot/api';
+import ControlScreen from './src/screens/Control';
 
 const theme = {
   ...DefaultTheme,
@@ -19,7 +21,7 @@ const theme = {
     onBackground: '#fff',
     surface: '#424242',
     onSurface: '#fff',
-    surfaceVariant: '#424242',
+    surfaceVariant: '#828282',
     onSurfaceVariant: 'rgba(255, 255, 255, 0.7)',
     backdrop: '#000',
     textSecondary: 'rgba(255, 255, 255, 0.7)'
@@ -27,8 +29,8 @@ const theme = {
 }
 
 export type RootStackParamList = {
-  Home: undefined;
-  Details: undefined;
+  Find: undefined;
+  Control: undefined;
 };
 
 export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -47,34 +49,61 @@ function CustomNavigationBar({options, navigation, back}: any) {
   );
 }
 
-function DetailsScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-    </View>
-  );
-}
 
 const App = () => {
+  const {
+    connect, 
+    isConnecting, 
+    isConnected,
+    isBusy,
+    isCalibrating,
+    isError,
+    isReady,
+    isExecuting,
+    currentPosition,
+    setCurrentPosition
+  } = useRobot();
+
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName="Control"
           screenOptions={{
             header: (props) => <CustomNavigationBar {...props} />
           }}
         >
           <Stack.Screen 
-            name="Home" 
-            component={HomeScreen}
+            name="Find" 
             options={{ title: 'Find device' }}
-          />
+          >
+            {(props) => {
+              return <FindDeviceScreen 
+                {...props} 
+                connect={connect}
+                isConnecting={isConnecting}
+                isConnected={isConnected}
+              />
+            }}
+          </Stack.Screen>
           <Stack.Screen 
-            name="Details" 
-            component={DetailsScreen} 
-            options={{ title: 'Details' }}
-          />
+            name="Control" 
+            options={{ title: 'Control' }}
+          >
+            {(props) => {
+              return <ControlScreen 
+                {...props}
+                isBusy={isBusy}
+                isCalibrating={isCalibrating}
+                isError={isError}
+                isExecuting={isExecuting}
+                isReady={isReady}
+                isConnected={isConnected}
+                currentPosition={currentPosition}
+                setCurrentPosition={setCurrentPosition}
+              />
+            }}
+          </Stack.Screen>
         </Stack.Navigator>
       </PaperProvider>
     </NavigationContainer>
