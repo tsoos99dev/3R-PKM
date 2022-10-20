@@ -1,6 +1,6 @@
 import Slider from "@react-native-community/slider";
 import React, { useState } from "react";
-import {View } from "react-native";
+import {ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import ControlView from "../components/ControlView";
 import PageContainer from "../components/PageContainer";
@@ -9,12 +9,13 @@ import { RobotPosition } from "../robot/api";
 type Props = {
     isConnected: boolean,
     isError: boolean,
+    isStarting: boolean,
     isCalibrating: boolean,
     isBusy: boolean,
     isReady: boolean,
     isExecuting: boolean,
-    position: RobotPosition,
-    maxSpeed: number,
+    position: RobotPosition | null,
+    maxSpeed: number | null,
     setTargetPosition: (newPosition: RobotPosition) => void,
     setMaxSpeed: (newSpeed: number) => void,
     home: () => void,
@@ -23,22 +24,50 @@ type Props = {
 
 const ControlScreen = (props: Props) => {
     const theme = useTheme();
+    const [targetPosition, setTargetPosition] = useState(props.position);
     const [speed, setSpeed] = useState(props.maxSpeed);
 
-    const connString = props.isConnected ? "Connected" : "Disconnected";
+    if(props.position !== null && targetPosition === null) setTargetPosition(props.position);
+    if(props.maxSpeed !== null && speed === null) setSpeed(props.maxSpeed);
 
-    const {x, y, theta} = props.position;
-    const xString = x.toFixed(2);
-    const yString = y.toFixed(2);
-    const thetaString = theta.toFixed(2);
-    const speedString = speed.toFixed(2);
+    const setTargetPositionHandler = (pos: RobotPosition) => {
+        setTargetPosition(pos);
+        props.setTargetPosition(pos);
+    };
+
+    const connString = (() => {
+        if(!props.isConnected) return "Disconnected";
+        if(props.isStarting) return "Initialising...";
+        if(props.isReady) return "Ready";
+        if(props.isCalibrating) return "Calibrating...";
+        if(props.isExecuting) return "Running...";
+        if(props.isError) return "Error";
+
+        return "Unknown";
+    })();
+
+    const formatParam = (param: number | null | undefined) => {
+        if(!props.isConnected) return "--";
+        return param?.toFixed(2) ?? "--";
+    };
+
+    const xString = formatParam(props.position?.x);
+    const yString = formatParam(props.position?.y);
+    const thetaString = formatParam(props.position?.theta);
+    const speedString = formatParam(props.maxSpeed);
+
+    const xTargetString = formatParam(targetPosition?.x);
+    const yTargetString = formatParam(targetPosition?.y);
+    const thetaTargetString = formatParam(props.position?.theta);
 
     return (
         <PageContainer>
-            <View style={{
-                flex: 1,
-                justifyContent: 'space-between'
-            }}>
+            <ScrollView 
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={{
+                    padding: 16
+                }}>
                 <View style={{
                     alignItems: 'center',
                 }}>
@@ -50,12 +79,12 @@ const ControlScreen = (props: Props) => {
                         {connString}
                     </Text>
                 </View>
-                <ControlView 
+                <ControlView
                     position={props.position}
-                    setTargetPosition={props.setTargetPosition}
+                    setTargetPosition={setTargetPositionHandler}
+                    disabled={!props.isConnected || props.isStarting || props.isError || props.isCalibrating}
                 />
                 <View style={{
-                    flex: 1
                 }}>
                     <View style={{
                         flexDirection: 'row'
@@ -73,22 +102,36 @@ const ControlScreen = (props: Props) => {
                                 <View style={{
                                     flex: 1
                                 }}>
-                                    <Text variant="headlineLarge">X:</Text>
-                                    <Text variant="headlineLarge">Y:</Text>
-                                    <Text variant="headlineLarge">{'\u03B8'}:</Text>
+                                    <Text variant="bodySmall">Axis</Text>
+                                    <Text variant="headlineSmall">X:</Text>
+                                    <Text variant="headlineSmall">Y:</Text>
+                                    <Text variant="headlineSmall">{'\u03B8'}:</Text>
                                 </View>
                                 <View style={{
+                                    flex: 1,
                                     alignItems: 'flex-end'
                                 }}>
-                                    <Text variant="headlineLarge">{xString}</Text>
-                                    <Text variant="headlineLarge">{yString}</Text>
-                                    <Text variant="headlineLarge">{thetaString}</Text>
+                                    <Text variant="bodySmall">Current</Text>
+                                    <Text variant="headlineSmall">{xString}</Text>
+                                    <Text variant="headlineSmall">{yString}</Text>
+                                    <Text variant="headlineSmall">{thetaString}</Text>
                                 </View>
                                 <View style={{
+                                    flex: 1,
+                                    alignItems: 'flex-end'
                                 }}>
-                                    <Text variant="headlineLarge"> mm</Text>
-                                    <Text variant="headlineLarge"> mm</Text>
-                                    <Text variant="headlineLarge"> {'\u00b0'}</Text>
+                                    <Text variant="bodySmall">Target</Text>
+                                    <Text variant="headlineSmall">{xTargetString}</Text>
+                                    <Text variant="headlineSmall">{yTargetString}</Text>
+                                    <Text variant="headlineSmall">{thetaTargetString}</Text>
+                                </View>
+                                <View style={{
+                                    marginLeft: 8
+                                }}>
+                                    <Text variant="bodySmall" style={{textAlign: "right"}}>Unit</Text>
+                                    <Text variant="headlineSmall"> mm</Text>
+                                    <Text variant="headlineSmall"> mm</Text>
+                                    <Text variant="headlineSmall"> {'\u00b0'}</Text>
                                 </View>
                             </View>
                         </View>
@@ -102,12 +145,12 @@ const ControlScreen = (props: Props) => {
                             minimumValue={0}
                             maximumValue={10}
                             step={0.1}
-                            value={speed}
+                            value={speed ?? 0}
                             onValueChange={(value) => props.setMaxSpeed(value)}
                             thumbTintColor={theme.colors.primary}
                             minimumTrackTintColor={theme.colors.primary}
                             maximumTrackTintColor={theme.colors.surfaceVariant}
-                            // disabled={true}
+                            disabled={!props.isConnected || (!props.isExecuting && !props.isReady)}
                         />
                         <View style={{
                             flexDirection: 'row',
@@ -123,11 +166,12 @@ const ControlScreen = (props: Props) => {
                         flexDirection: 'row',
                         justifyContent: 'space-evenly'
                     }}>
-                        <Button mode="outlined" onPress={props.calibrate}>CALIBRATE</Button>
-                        <Button mode="outlined" onPress={props.home}>HOME</Button>
+                        <Button mode="outlined" disabled={!props.isConnected || !props.isReady} onPress={props.calibrate}>CALIBRATE</Button>
+                        <Button mode="outlined" disabled={!props.isConnected || !props.isReady} onPress={props.home}>HOME</Button>
                     </View>
                 </View>
-            </View>
+                </View>
+            </ScrollView>
         </PageContainer>
     );
 };

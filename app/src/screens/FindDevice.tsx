@@ -17,6 +17,7 @@ const socketUrl = 'wss://echo.websocket.org';
 
 type Props = {
     connect: () => void,
+    disconnect: () => void,
     isConnecting: boolean,
     isConnected: boolean
 }
@@ -32,13 +33,19 @@ const FindDeviceScreen = (props: Props) => {
         }
     }, [props.isConnected]);
 
-    const connString = props.isConnecting ? "Connecting..." : "Disconnected";
-    
+    const connString = (() => {
+        if(props.isConnected) return "Connected";
+        if(props.isConnecting) return "Connecting...";
+        
+        return "Disconnected";
+    })(); 
+
     return (
         <PageContainer>
             <View style={{
                 flex: 1,
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                padding: 16
             }}>
                 <View style={{
                     alignItems: 'center',
@@ -64,15 +71,16 @@ const FindDeviceScreen = (props: Props) => {
                             mode="contained"
                             disabled={props.isConnecting}
                             loading={props.isConnecting}
-                            onPress={() => props.connect()}
+                            onPress={() => {
+                                props.isConnected ? navigation.navigate('Control') : props.connect()
+                            }}
                         >
-                            CONNECT
+                            {props.isConnected ? "READY!" : "CONNECT"}
                         </Button>
                     </View>
                 </View>
                 <View style={{
                     flexDirection: 'row',
-                    justifyContent:'flex-start',
                     alignItems: 'center'
                 }}>
                     <Icon 
@@ -83,7 +91,9 @@ const FindDeviceScreen = (props: Props) => {
                             marginRight: 8
                         }}
                     />
-                    <Text variant='bodyMedium'>
+                    <Text variant='bodyMedium' style={{
+                        flex: 1
+                    }}>
                         Please make sure your device is connected to 
                         the robot's Wi-Fi
                     </Text>

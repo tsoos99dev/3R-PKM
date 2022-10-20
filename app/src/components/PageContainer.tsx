@@ -8,8 +8,7 @@ const PageContainer = (props: PropsWithChildren) => {
     return (
         <View style={{
             backgroundColor: theme.colors.background,
-            flex: 1,
-            padding: 16
+            flex: 1
         }}>
             {props.children}
         </View>

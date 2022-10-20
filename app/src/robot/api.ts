@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-native-use-websocket';
 
 
@@ -12,53 +12,80 @@ enum RobotState {
 
 export declare type RobotPosition = {x: number, y: number, theta: number}; 
 
-const robotSocketUrl = 'wss://echo.websocket.org';
+const robotSocketUrl = 'ws://192.168.4.1:81';
 
 export const useRobot = () => {
     const [shouldConnect, setShouldConnect] = useState(false);
-    const [position, setPosition] = useState({x: 0, y: 0, theta: 0});
-    const [maxSpeed, setMaxSpeed] = useState(5);
+    const [position, setPosition] = useState<RobotPosition | null>(null);
+    const [maxSpeed, setMaxSpeed] = useState<number | null>(null);
     const [robotState, setRobotState] = useState(RobotState.UNKNOWN);
 
     const {
         sendMessage, 
+        sendJsonMessage,
         lastMessage, 
-        readyState
+        lastJsonMessage,
+        readyState,
     } = useWebSocket(robotSocketUrl, {
         onError: (error) => {
-
+            console.log(error);
         },
         onClose: (event) => {
+            console.log(event);
             setShouldConnect(false);
         },
         share: true
     }, shouldConnect);
 
+    useEffect(() => {
+        const { maxSpeed, position, status } = lastJsonMessage;
+
+        if(maxSpeed === undefined || position === undefined || status === undefined) return;
+
+        console.log(lastJsonMessage);
+        setMaxSpeed(maxSpeed);
+        setPosition(position);
+        setRobotState(status);
+    }, [lastJsonMessage]);
+
     const connectHandler = useCallback(() => {
         setShouldConnect(true);
     }, []);
 
+    const disconnectHandler = useCallback(() => {
+        setShouldConnect(false);
+    }, []);
+
     const setTargetPositionHandler = useCallback((newPosition: RobotPosition) => {
-        console.log(newPosition);
-        setPosition(newPosition);
+        sendJsonMessage({
+            type: "setPosition",
+            position: newPosition
+        });
     }, []);
 
     const setMaxSpeedHandler = useCallback((newSpeed: number) => {
-        console.log(newSpeed);
-        setMaxSpeed(newSpeed);
+        sendJsonMessage({
+            type: "setSpeed",
+            maxSpeed: newSpeed
+        });
     }, []);
 
     const homeHandler = useCallback(() => {
-        console.log('Home');
+        sendJsonMessage({
+            type: 'home'
+        })
     }, []);
 
     const calibrateHandler = useCallback(() => {
-        console.log('Calibrate');
+        sendJsonMessage({
+            type: "calibrate"
+        });
     }, []);
     
     return {
         isConnecting: (readyState === ReadyState.CONNECTING),
-        isConnected: (readyState === ReadyState.CLOSED),
+        isConnected: (readyState === ReadyState.OPEN),
+        isStarting: (robotState === RobotState.UNKNOWN),
         isBusy: (robotState === RobotState.CALIBRATING || robotState === RobotState.EXECUTING),
         isError: (robotState === RobotState.ERROR),
         isCalibrating: (robotState === RobotState.CALIBRATING),
@@ -69,6 +96,7 @@ export const useRobot = () => {
         setTargetPosition: setTargetPositionHandler,
         setMaxSpeed: setMaxSpeedHandler,
         connect: connectHandler,
+        disconnect: disconnectHandler,
         home: homeHandler,
         calibrate: calibrateHandler
     };
