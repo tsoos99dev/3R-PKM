@@ -60,8 +60,12 @@ const App = () => {
     isError,
     isReady,
     isExecuting,
-    currentPosition,
-    setCurrentPosition
+    position,
+    maxSpeed,
+    setTargetPosition,
+    setMaxSpeed,
+    home,
+    calibrate
   } = useRobot();
 
   return (
@@ -99,8 +103,12 @@ const App = () => {
                 isExecuting={isExecuting}
                 isReady={isReady}
                 isConnected={isConnected}
-                currentPosition={currentPosition}
-                setCurrentPosition={setCurrentPosition}
+                position={position}
+                maxSpeed={maxSpeed}
+                setTargetPosition={setTargetPosition}
+                setMaxSpeed={setMaxSpeed}
+                home={home}
+                calibrate={calibrate}
               />
             }}
           </Stack.Screen>

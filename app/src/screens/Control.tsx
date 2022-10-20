@@ -1,8 +1,8 @@
 import Slider from "@react-native-community/slider";
-import React, { useCallback, useRef, useState } from "react";
-import { Animated, Dimensions, GestureResponderEvent, Image, PanResponder, PanResponderGestureState, View } from "react-native";
-import Draggable from "react-native-draggable";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import React, { useState } from "react";
+import {View } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
+import ControlView from "../components/ControlView";
 import PageContainer from "../components/PageContainer";
 import { RobotPosition } from "../robot/api";
 
@@ -13,45 +13,25 @@ type Props = {
     isBusy: boolean,
     isReady: boolean,
     isExecuting: boolean,
-    currentPosition: RobotPosition,
-    setCurrentPosition: (newPosition: {x: number, y: number, theta: number}) => void
+    position: RobotPosition,
+    maxSpeed: number,
+    setTargetPosition: (newPosition: RobotPosition) => void,
+    setMaxSpeed: (newSpeed: number) => void,
+    home: () => void,
+    calibrate: () => void
 };
 
 const ControlScreen = (props: Props) => {
     const theme = useTheme();
-    const [position, setPosition] = useState({x: 0, y: 0});
-    const [speed, setSpeed] = useState(0);
-
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
-
-    const toScreenSpace = (pos: {x: number, y: number}) => {
-        return {x: pos.x + windowWidth / 2 - 16, y: pos.y + windowWidth / 2 - 16};
-    }
-    
-    const toRobotSpace = (pos: {x: number, y: number}) => {
-        return {x: pos.x - windowWidth / 2 + 16, y: pos.y - windowWidth / 2 + 16};
-    }
+    const [speed, setSpeed] = useState(props.maxSpeed);
 
     const connString = props.isConnected ? "Connected" : "Disconnected";
 
-    const {x, y, theta} = props.currentPosition;
-    const initialScreenPos = toScreenSpace({x: 0, y: 0});
-    const screenPos = toScreenSpace({x: position.x, y: position.y});
-    const screenCurrentPos = toScreenSpace({x, y});
+    const {x, y, theta} = props.position;
     const xString = x.toFixed(2);
     const yString = y.toFixed(2);
     const thetaString = theta.toFixed(2);
     const speedString = speed.toFixed(2);
-
-    const dragHandler = useCallback((event: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        const rx = gestureState.moveX;
-        const ry = gestureState.moveY;
-        console.log(rx, ry);
-        const rPos = toRobotSpace({x: rx, y: ry});
-        // console.log(rPos);
-        setPosition(rPos);
-    }, []);
 
     return (
         <PageContainer>
@@ -70,44 +50,10 @@ const ControlScreen = (props: Props) => {
                         {connString}
                     </Text>
                 </View>
-                <View style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    marginVertical: 8
-                }}>
-                    <Image 
-                        source={require('../assets/controlArea.png')}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            tintColor: "#ccc"
-                        }}
-                    />
-                    <View style={{
-                        height: 28,
-                        width: 28,
-                        backgroundColor: theme.colors.secondary,
-                        borderRadius: 56,
-                        position: 'absolute',
-                        top: screenCurrentPos.y-14,
-                        left: screenCurrentPos.x-14,
-                    }} />
-                    <Draggable 
-                        x={initialScreenPos.x-12}
-                        y={initialScreenPos.y-12}
-                        onDrag={dragHandler}
-                        // minX={screenCurrentPos.y}
-                        minY={64}
-                        maxY={300}
-                    >
-                        <View style={{
-                            height: 24,
-                            width: 24,
-                            backgroundColor: theme.colors.primary,
-                            borderRadius: 48
-                        }} />
-                    </Draggable>
-                </View>
+                <ControlView 
+                    position={props.position}
+                    setTargetPosition={props.setTargetPosition}
+                />
                 <View style={{
                     flex: 1
                 }}>
@@ -156,7 +102,8 @@ const ControlScreen = (props: Props) => {
                             minimumValue={0}
                             maximumValue={10}
                             step={0.1}
-                            onValueChange={(value) => setSpeed(value)}
+                            value={speed}
+                            onValueChange={(value) => props.setMaxSpeed(value)}
                             thumbTintColor={theme.colors.primary}
                             minimumTrackTintColor={theme.colors.primary}
                             maximumTrackTintColor={theme.colors.surfaceVariant}
@@ -176,8 +123,8 @@ const ControlScreen = (props: Props) => {
                         flexDirection: 'row',
                         justifyContent: 'space-evenly'
                     }}>
-                        <Button mode="outlined" onPress={()=> console.log('Calibrate')}>CALIBRATE</Button>
-                        <Button mode="outlined" onPress={()=> console.log('Home')}>HOME</Button>
+                        <Button mode="outlined" onPress={props.calibrate}>CALIBRATE</Button>
+                        <Button mode="outlined" onPress={props.home}>HOME</Button>
                     </View>
                 </View>
             </View>
