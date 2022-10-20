@@ -95,19 +95,20 @@ const ControlView = (props: Props) => {
             }
             { initialScreenPos === null ? null :
             <Draggable
-                x={initialScreenPos.x-14}
-                y={initialScreenPos.y-14}
+                x={0}
+                y={0}
                 onDrag={dragHandler}
-                // minX={screenCurrentPos.y}
-                minY={64}
-                maxY={300}
+                minX={0}
+                maxX={0}
+                minY={0}
+                maxY={0}
                 disabled={disabled}
             >
                 <ControlPin
-                    size={28} 
+                    size={controlViewLayout.width} 
                     color={"red"}
                     style={{
-                        opacity: 0.5
+                        opacity: 0
                     }}
                 />
             </Draggable>
