@@ -50,71 +50,25 @@ function CustomNavigationBar({options, navigation, back}: any) {
 
 
 const App = () => {
-  const {
-    connect, 
-    disconnect,
-    isConnecting, 
-    isConnected,
-    isStarting,
-    isBusy,
-    isCalibrating,
-    isError,
-    isReady,
-    isExecuting,
-    position,
-    maxSpeed,
-    setTargetPosition,
-    setMaxSpeed,
-    home,
-    calibrate
-  } = useRobot();
-
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
         <Stack.Navigator
-          initialRouteName="Find"
+          initialRouteName="Control"
           screenOptions={{
-            header: (props) => <CustomNavigationBar {...props} />
+            header: (props) => null // <CustomNavigationBar {...props} />
           }}
         >
           <Stack.Screen 
             name="Find" 
             options={{ title: 'Find device' }}
-          >
-            {(props) => {
-              return <FindDeviceScreen 
-                {...props} 
-                connect={connect}
-                disconnect={disconnect}
-                isConnecting={isConnecting}
-                isConnected={isConnected}
-              />
-            }}
-          </Stack.Screen>
+            component={FindDeviceScreen}
+          />
           <Stack.Screen 
             name="Control" 
             options={{ title: 'Control' }}
-          >
-            {(props) => {
-              return <ControlScreen 
-                {...props}
-                isStarting={isStarting}
-                isBusy={isBusy}
-                isCalibrating={isCalibrating}
-                isError={isError}
-                isExecuting={isExecuting}
-                isReady={isReady}
-                isConnected={isConnected}
-                position={position}
-                maxSpeed={maxSpeed}
-                setTargetPosition={setTargetPosition}
-                setMaxSpeed={setMaxSpeed}
-                home={home}
-                calibrate={calibrate}
-              />
-            }}
-          </Stack.Screen>
+            component={ControlScreen}
+          />
         </Stack.Navigator>
       </PaperProvider>
     </NavigationContainer>

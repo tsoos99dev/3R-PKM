@@ -93,7 +93,7 @@ export const useRobot = () => {
         isExecuting: (robotState === RobotState.EXECUTING),
         position: position,
         maxSpeed: maxSpeed,
-        setTargetPosition: setTargetPositionHandler,
+        setPosition: setTargetPositionHandler,
         setMaxSpeed: setMaxSpeedHandler,
         connect: connectHandler,
         disconnect: disconnectHandler,

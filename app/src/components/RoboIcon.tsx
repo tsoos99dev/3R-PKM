@@ -1,4 +1,5 @@
-import { PropsWithChildren } from "react";
+import React from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { Image, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -43,4 +44,4 @@ const RoboIcon = (props: Props) => {
     );
 };
 
-export default RoboIcon
+export default React.memo(RoboIcon);

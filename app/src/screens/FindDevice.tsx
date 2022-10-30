@@ -1,44 +1,32 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import {
   Button,
-  Text,
-  useTheme
+  Text
 } from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { StackNavigation } from '../../App';
 import PageContainer from '../components/PageContainer';
 import RoboIcon from '../components/RoboIcon';
-
-const socketUrl = 'wss://echo.websocket.org';
+import RobotStatus from '../components/RobotStatus';
+import { useRobot } from '../robot/api';
 
 
 type Props = {
-    connect: () => void,
-    disconnect: () => void,
-    isConnecting: boolean,
-    isConnected: boolean
 }
 
 
 const FindDeviceScreen = (props: Props) => {
-    const theme = useTheme();
     const navigation = useNavigation<StackNavigation>();
+    const {isConnected, isConnecting, connect} = useRobot();
 
     useEffect(() => {
-        if(props.isConnected) {
+        if(isConnected) {
             navigation.navigate('Control');
         }
-    }, [props.isConnected]);
-
-    const connString = (() => {
-        if(props.isConnected) return "Connected";
-        if(props.isConnecting) return "Connecting...";
-        
-        return "Disconnected";
-    })(); 
+    }, [isConnected]);
 
     return (
         <PageContainer>
@@ -47,17 +35,7 @@ const FindDeviceScreen = (props: Props) => {
                 justifyContent: 'space-between',
                 padding: 16
             }}>
-                <View style={{
-                    alignItems: 'center',
-                }}>
-                    <Text variant='headlineLarge'>3R-PKM</Text>
-                    <Text 
-                        variant='bodyLarge' 
-                        style={{color: theme.colors.textSecondary}}
-                    >
-                        {connString}
-                    </Text>
-                </View>
+                <RobotStatus />
                 <View style={{
                         justifyContent: 'center',
                 }}>
@@ -69,13 +47,13 @@ const FindDeviceScreen = (props: Props) => {
                     }}>
                         <Button 
                             mode="contained"
-                            disabled={props.isConnecting}
-                            loading={props.isConnecting}
+                            disabled={isConnecting}
+                            loading={isConnecting}
                             onPress={() => {
-                                props.isConnected ? navigation.navigate('Control') : props.connect()
+                                isConnected ? navigation.navigate('Control') : connect()
                             }}
                         >
-                            {props.isConnected ? "READY!" : "CONNECT"}
+                            {isConnected ? "READY!" : "CONNECT"}
                         </Button>
                     </View>
                 </View>

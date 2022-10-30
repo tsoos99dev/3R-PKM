@@ -3,10 +3,13 @@ import { View, Image, GestureResponderEvent, PanResponderGestureState } from "re
 import Draggable from "react-native-draggable";
 import { useTheme } from "react-native-paper";
 import { RobotPosition } from "../robot/api";
+import ControlPanel from "./ControlPanel";
 import ControlPin from "./ControlPin";
+
 
 type Props = {
     position: RobotPosition | null,
+    targetPosition: RobotPosition | null,
     setTargetPosition: (pos: RobotPosition) => void,
     disabled?: boolean
 };
@@ -45,7 +48,6 @@ const ControlView = (props: Props) => {
         props.setTargetPosition({x, y, theta: 0});
     }, [controlViewLayout]);
 
-    const initialScreenPos = initialPosition === null ? null : toScreenSpace(initialPosition);
     const screenControlPos = controlPosition === null ? null : toScreenSpace(controlPosition);
     const screenPos = props.position === null ? null : toScreenSpace({x: props.position.x, y: props.position.y});
 
@@ -63,37 +65,27 @@ const ControlView = (props: Props) => {
                 opacity: disabled ? 0.5 : 1
             }}
         >
-            <Image 
-                source={require('../assets/controlArea.png')}
-                style={{
-                    width: controlViewLayout.width,
-                    height: controlViewLayout.width,
-                    tintColor: "#ccc"
-                }}
-            />
-            { screenPos === null ? null :
+            <ControlPanel size={controlViewLayout.width}/>
             <ControlPin
                 size={32} 
                 color={theme.colors.secondary}
                 style={{
                     position: 'absolute',
-                    top: screenPos.y-16,
-                    left: screenPos.x-16
+                    top: screenPos?.y ?? 0 - 16,
+                    left: screenPos?.x ?? 0 - 16,
+                    opacity: screenPos ? 1.0 : 0.0
                 }}
             />
-            }
-            { screenControlPos === null ? null :
             <ControlPin
                 size={28} 
                 color={theme.colors.primary}
                 style={{
                     position: 'absolute',
-                    top: screenControlPos.y-14,
-                    left: screenControlPos.x-14
+                    top: screenControlPos?.y ?? 0 - 14,
+                    left: screenControlPos?.x ?? 0 - 14,
+                    opacity: screenControlPos ? 1.0 : 0.0
                 }}
             />
-            }
-            { initialScreenPos === null ? null :
             <Draggable
                 x={0}
                 y={0}
@@ -112,7 +104,6 @@ const ControlView = (props: Props) => {
                     }}
                 />
             </Draggable>
-            }
         </View>
     );
 };
