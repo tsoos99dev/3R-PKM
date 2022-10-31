@@ -4,30 +4,28 @@ import { Text, useTheme } from "react-native-paper";
 import { useRobot } from "../robot/api";
 
 type Props = {
+    isConnected: boolean, 
+    isConnecting: boolean,
+    isIdle: boolean,
+    isReady: boolean,
+    isCalibrating: boolean,
+    isExecuting: boolean,
+    isError: boolean
 };
 
 const RobotStatus = (props: Props) => {
     const theme = useTheme();
-    const {
-        isConnected, 
-        isConnecting,
-        isStarting,
-        isReady,
-        isCalibrating,
-        isExecuting,
-        isError,
-    } = useRobot();
     
     const connString = (() => {
-        if(isConnected) return "Connected";
-        if(isConnecting) return "Connecting...";
-        if(isStarting) return "Initialising...";
-        if(isReady) return "Ready";
-        if(isCalibrating) return "Calibrating...";
-        if(isExecuting) return "Running...";
-        if(isError) return "Error";
+        if(!props.isConnected) return "Disconnected";
+        if(props.isConnecting) return "Connecting...";
+        if(props.isReady) return "Ready";
+        if(props.isCalibrating) return "Calibrating...";
+        if(props.isExecuting) return "Running...";
+        if(props.isError) return "Error";
+        if(props.isIdle) return "Initialising...";
 
-        return "Disconnected";
+        return "Connected";
     })();
 
     return (
@@ -49,4 +47,4 @@ const RobotStatus = (props: Props) => {
     );
 };
 
-export default RobotStatus;
+export default React.memo(RobotStatus);

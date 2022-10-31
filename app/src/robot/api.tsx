@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, ReactElement } from 'react';
 import useWebSocket, { ReadyState } from 'react-native-use-websocket';
 
 
-enum RobotState {
+export enum RobotState {
     UNKNOWN = 0,
     READY = 1,
     CALIBRATING = 2,
@@ -10,11 +10,49 @@ enum RobotState {
     ERROR = 4
 };
 
-export declare type RobotPosition = {x: number, y: number, theta: number}; 
+export declare type RobotPosition = {x: number, y: number, theta: number};
+export declare type RobotAPIResponse = {
+    isConnecting: boolean,
+    isConnected: boolean,
+    isIdle: boolean,
+    isBusy: boolean,
+    isError: boolean,
+    isCalibrating: boolean,
+    isReady: boolean,
+    isExecuting: boolean,
+    position: RobotPosition | null,
+    maxSpeed: number | null,
+    setPosition: (pos: RobotPosition) => void,
+    setMaxSpeed: (speed: number) => void,
+    connect: () => void,
+    disconnect: () => void,
+    home: () => void,
+    calibrate: () => void
+};
 
-const robotSocketUrl = 'ws://192.168.4.1:81';
+// const robotSocketUrl = 'ws://192.168.4.1:81';
+const robotSocketUrl = 'ws://10.0.2.2:8999';
 
-export const useRobot = () => {
+export const RobotContext = React.createContext<RobotAPIResponse>({
+    isConnecting: false,
+    isConnected: false,
+    isIdle: false,
+    isBusy: false,
+    isError: false,
+    isCalibrating: false,
+    isReady: false,
+    isExecuting: false,
+    position: null,
+    maxSpeed: null,
+    setPosition: (pos: RobotPosition) => {},
+    setMaxSpeed: (speed: number) => {},
+    connect: () => {},
+    disconnect: () => {},
+    home: () => {},
+    calibrate: () => {}
+});
+
+export const RobotProvider = (props: {children: ReactElement}) => {
     const [shouldConnect, setShouldConnect] = useState(false);
     const [position, setPosition] = useState<RobotPosition | null>(null);
     const [maxSpeed, setMaxSpeed] = useState<number | null>(null);
@@ -82,10 +120,10 @@ export const useRobot = () => {
         });
     }, []);
     
-    return {
+    const value = {
         isConnecting: (readyState === ReadyState.CONNECTING),
         isConnected: (readyState === ReadyState.OPEN),
-        isStarting: (robotState === RobotState.UNKNOWN),
+        isIdle: (robotState === RobotState.UNKNOWN),
         isBusy: (robotState === RobotState.CALIBRATING || robotState === RobotState.EXECUTING),
         isError: (robotState === RobotState.ERROR),
         isCalibrating: (robotState === RobotState.CALIBRATING),
@@ -100,4 +138,16 @@ export const useRobot = () => {
         home: homeHandler,
         calibrate: calibrateHandler
     };
+
+    return (
+        <RobotContext.Provider value={value}>{props.children}</RobotContext.Provider>
+    );
+};
+
+export const useRobot = () => {
+    const context = React.useContext(RobotContext)
+    if (context === undefined) {
+        throw new Error('useCount must be used within a CountProvider')
+    }
+    return context;
 };

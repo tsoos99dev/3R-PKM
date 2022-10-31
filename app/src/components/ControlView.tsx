@@ -71,8 +71,8 @@ const ControlView = (props: Props) => {
                 color={theme.colors.secondary}
                 style={{
                     position: 'absolute',
-                    top: screenPos?.y ?? 0 - 16,
-                    left: screenPos?.x ?? 0 - 16,
+                    top: (screenPos?.y ?? 0) - 16,
+                    left: (screenPos?.x ?? 0) - 16,
                     opacity: screenPos ? 1.0 : 0.0
                 }}
             />
@@ -81,8 +81,8 @@ const ControlView = (props: Props) => {
                 color={theme.colors.primary}
                 style={{
                     position: 'absolute',
-                    top: screenControlPos?.y ?? 0 - 14,
-                    left: screenControlPos?.x ?? 0 - 14,
+                    top: (screenControlPos?.y ?? 0) - 14,
+                    left: (screenControlPos?.x ?? 0) - 14,
                     opacity: screenControlPos ? 1.0 : 0.0
                 }}
             />
@@ -108,4 +108,4 @@ const ControlView = (props: Props) => {
     );
 };
 
-export default ControlView;
+export default React.memo(ControlView);

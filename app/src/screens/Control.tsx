@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import ControlView from "../components/ControlView";
-import InfoBox from "../components/infoBox";
+import InfoBox from "../components/InfoBox";
 import PageContainer from "../components/PageContainer";
 import RobotStatus from "../components/RobotStatus";
 import SpeedControl from "../components/SpeedControl";
@@ -18,7 +18,8 @@ const ControlScreen = (props: Props) => {
         position,
         maxSpeed,
         isConnected, 
-        isStarting,
+        isConnecting,
+        isIdle,
         isReady,
         isCalibrating,
         isExecuting,
@@ -43,12 +44,20 @@ const ControlScreen = (props: Props) => {
             <ScrollView 
                 showsVerticalScrollIndicator={false}
             >
-                <RobotStatus />
+                <RobotStatus 
+                    isConnected={isConnected}
+                    isConnecting={isConnecting}    
+                    isCalibrating={isCalibrating}
+                    isError={isError}
+                    isExecuting={isExecuting}
+                    isIdle={isIdle}
+                    isReady={isReady}
+                />
                 <ControlView
                     position={position}
                     targetPosition={targetPosition}
                     setTargetPosition={setTargetPositionHandler}
-                    disabled={!isConnected || isStarting || isError || isCalibrating}
+                    disabled={!isConnected || isIdle || isError || isCalibrating}
                 />
                 <View style={{
                 }}>

@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Appbar, MD3DarkTheme as DefaultTheme, Provider as PaperProvider, Text } from 'react-native-paper';
 import FindDeviceScreen from './src/screens/FindDevice';
-import { useRobot } from './src/robot/api';
+import { RobotProvider, useRobot } from './src/robot/api';
 import ControlScreen from './src/screens/Control';
 
 const theme = {
@@ -53,8 +53,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
+        <RobotProvider>
         <Stack.Navigator
-          initialRouteName="Control"
+          initialRouteName="Find"
           screenOptions={{
             header: (props) => null // <CustomNavigationBar {...props} />
           }}
@@ -70,6 +71,7 @@ const App = () => {
             component={ControlScreen}
           />
         </Stack.Navigator>
+        </RobotProvider>
       </PaperProvider>
     </NavigationContainer>
   );

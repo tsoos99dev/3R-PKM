@@ -20,7 +20,16 @@ type Props = {
 
 const FindDeviceScreen = (props: Props) => {
     const navigation = useNavigation<StackNavigation>();
-    const {isConnected, isConnecting, connect} = useRobot();
+    const {
+        isConnected, 
+        isConnecting, 
+        isCalibrating,
+        isError,
+        isExecuting,
+        isIdle,
+        isReady,
+        connect
+    } = useRobot();
 
     useEffect(() => {
         if(isConnected) {
@@ -35,7 +44,15 @@ const FindDeviceScreen = (props: Props) => {
                 justifyContent: 'space-between',
                 padding: 16
             }}>
-                <RobotStatus />
+                <RobotStatus 
+                isConnected={isConnected}
+                isConnecting={isConnecting}    
+                isCalibrating={isCalibrating}
+                isError={isError}
+                isExecuting={isExecuting}
+                isIdle={isIdle}
+                isReady={isReady}
+                />
                 <View style={{
                         justifyContent: 'center',
                 }}>

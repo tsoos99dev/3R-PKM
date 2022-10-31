@@ -1,5 +1,5 @@
 import Slider from "@react-native-community/slider";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import { formatParam } from "../robot/util";
@@ -13,6 +13,15 @@ type Props = {
 
 const SpeedControl = (props: Props) => {
     const theme = useTheme();
+
+    const [initialSpeed, setInitialSpeed] = useState<number | null>(null);
+
+    if(initialSpeed === null && props.speed !== null) setInitialSpeed(props.speed);
+
+    const setSpeedHandler = (value: number) => {
+        if(disabled) return;
+        props.setSpeed(value);
+    };
 
     const disabled = props.disabled ?? false;
 
@@ -28,8 +37,8 @@ const SpeedControl = (props: Props) => {
                 minimumValue={0}
                 maximumValue={10}
                 step={0.1}
-                value={props.speed ?? 0}
-                onValueChange={(value) => props.setSpeed(value)}
+                value={initialSpeed ?? 0}
+                onValueChange={ setSpeedHandler }
                 thumbTintColor={theme.colors.primary}
                 minimumTrackTintColor={theme.colors.primary}
                 maximumTrackTintColor={theme.colors.surfaceVariant}
@@ -48,4 +57,4 @@ const SpeedControl = (props: Props) => {
     );
 };
 
-export default SpeedControl;
+export default React.memo(SpeedControl);

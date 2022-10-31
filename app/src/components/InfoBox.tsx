@@ -72,4 +72,4 @@ const InfoBox = (props: Props) => {
     );
 };
 
-export default InfoBox;
+export default React.memo(InfoBox);
