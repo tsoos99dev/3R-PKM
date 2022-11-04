@@ -113,12 +113,12 @@ const setSpeed = (speed: number) => {
     }, 500);
 };
 
-const setPosition = (pos: RobotPosition) => {
+const setPosition = (pos: MotorPosition) => {
     currentState = RobotState.EXECUTING;
     setTimeout(() => {
-        currentPos.theta1 = pos.x;
-        currentPos.theta2 = pos.y;
-        currentPos.theta3 = pos.theta;
+        currentPos.theta1 = pos.theta1;
+        currentPos.theta2 = pos.theta2;
+        currentPos.theta3 = pos.theta3;
 
         if(readyTimer !== null) clearInterval(readyTimer);
         readyTimer = setTimeout(() => {

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, ReactElement } from 'react';
 import useWebSocket, { ReadyState } from 'react-native-use-websocket';
+import { inverseKinematics } from './util';
 
 
 export enum RobotState {
@@ -96,7 +97,7 @@ export const RobotProvider = (props: {children: ReactElement}) => {
     const setTargetPositionHandler = useCallback((newPosition: RobotPosition) => {
         sendJsonMessage({
             type: "setPosition",
-            position: newPosition
+            position: inverseKinematics(newPosition)
         });
     }, []);
 

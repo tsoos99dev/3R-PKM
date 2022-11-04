@@ -5,6 +5,7 @@ import { useTheme } from "react-native-paper";
 import { MotorPosition, RobotPosition } from "../robot/api";
 import ControlPanel from "./ControlPanel";
 import ControlPin from "./ControlPin";
+import { ROBOT_r, ROBOT_L } from '../robot/constants'
 
 
 type Props = {
@@ -21,23 +22,21 @@ const ControlView = (props: Props) => {
 
     const disabled = props.disabled ?? false;
 
-    const r = 144.34;
-    const L = 381; 
     const rS = 0.365 * controlViewLayout.height;
     const xOffset = controlViewLayout.width / 2;
     const yOffset = controlViewLayout.height * 0.615;
 
     const toRobotSpace = (pos: {x: number, y: number}) => {
         // Scale coords
-        const newX = r/rS*(pos.x - xOffset);
-        const newY = r/rS*(-pos.y + yOffset);
+        const newX = ROBOT_r/rS*(pos.x - xOffset);
+        const newY = ROBOT_r/rS*(-pos.y + yOffset);
 
         // Constrain
-        const cXmin = Math.max(-L/3+newY/Math.sqrt(3), -(2*r+newY)/Math.sqrt(3));
-        const cXmax = Math.min(newX,L/3-newY/Math.sqrt(3), (2*r+newY)/Math.sqrt(3));
+        const cXmin = Math.max(-ROBOT_L/3+newY/Math.sqrt(3), -(2*ROBOT_r+newY)/Math.sqrt(3));
+        const cXmax = Math.min(newX,ROBOT_L/3-newY/Math.sqrt(3), (2*ROBOT_r+newY)/Math.sqrt(3));
         const cX = Math.max(cXmin, Math.min(newX, cXmax));
         
-        const cY = Math.max(-L/(2*Math.sqrt(3)), Math.min(r, newY));
+        const cY = Math.max(-ROBOT_L/(2*Math.sqrt(3)), Math.min(ROBOT_r, newY));
 
         return {
             x: cX, 
@@ -47,8 +46,8 @@ const ControlView = (props: Props) => {
 
     const toScreenSpace = (pos: {x: number, y: number}) => {
         // Scale coords
-        const newX = rS/r*pos.x + xOffset;
-        const newY = -rS/r*pos.y + yOffset;
+        const newX = rS/ROBOT_r*pos.x + xOffset;
+        const newY = -rS/ROBOT_r*pos.y + yOffset;
 
         return {
             x: newX, 
@@ -60,6 +59,8 @@ const ControlView = (props: Props) => {
         const rx = gestureState.moveX - controlViewLayout.x;
         const ry = gestureState.moveY - controlViewLayout.y;
         const {x, y} = toRobotSpace({x: rx, y: ry});
+
+
 
         props.setTargetPosition({x, y, theta: 0});
     }, [controlViewLayout]);

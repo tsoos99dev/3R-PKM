@@ -17,11 +17,10 @@ type Props = {
 const ControlScreen = (props: Props) => {
     const navigation = useNavigation<StackNavigation>();
     
-    const theme = useTheme();
     const {
         position,
         maxSpeed,
-        isConnected, 
+        isConnected,
         isConnecting,
         isIdle,
         isReady,
@@ -37,6 +36,8 @@ const ControlScreen = (props: Props) => {
     const [targetPosition, setTargetPosition] = useState({x: 0, y: 0, theta: 0});
 
     const setTargetPositionHandler = (pos: RobotPosition) => {
+        // Inverse kinematics
+
         setTargetPosition(pos);
         setPosition(pos);
     };

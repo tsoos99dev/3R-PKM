@@ -59,12 +59,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 
       String commandType = command["type"];
       if(commandType == "setPosition") {
-        float x = command["position"]["x"];
-        float y = command["position"]["y"];
-        float theta = command["position"]["theta"];
-
-        RobotPos pos = {x, y, theta};
-        MotorPos motorPos = inverseKinematics(pos);
+        float theta1 = command["position"]["theta1"];
+        float theta2 = command["position"]["theta2"];
+        float theta3 = command["position"]["theta3"];
+        MotorPos motorPos = {theta1, theta2, theta3};
         commandQueue.enqueue("p" + String(motorPos.q1) + String(motorPos.q2) + String(motorPos.q3) + "\n");
       } else if(commandType == "setSpeed") {
         command["maxSpeed"];
@@ -85,16 +83,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 }
 
 
-RobotPos forwardKinematics(MotorPos pos) {
-  return {0, 0, 0};
-}
-
-
-MotorPos inverseKinematics(RobotPos pos) {
-  return {0, 0, 0};
-}
-
-
 void checkStat() {
   if(!waitingForStat) {
     if(commandQueue.isFull()) return;
@@ -112,8 +100,6 @@ void checkStat() {
   unsigned char q3 = Serial.read();
 
   MotorPos motorPos = {q1, q2, q3};
-//  RobotPos pos = forwardKinematics(motorPos);
-
   
   stat["theta1"] = motorPos.q1;
   stat["theta2"] = motorPos.q2;
