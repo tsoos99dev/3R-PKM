@@ -9,7 +9,7 @@ import ControlPin from "./ControlPin";
 
 type Props = {
     position: MotorPosition | null,
-    targetPosition: RobotPosition | null,
+    targetPosition: RobotPosition,
     setTargetPosition: (pos: RobotPosition) => void,
     disabled?: boolean
 };
@@ -18,24 +18,53 @@ const ControlView = (props: Props) => {
     const theme = useTheme();
     const controlViewRef = useRef(null);
     const [controlViewLayout, setControlViewLayout] = useState({x: 0, y: 0, width: 0, height: 0});
-    const [controlPosition, setControlPosition] = useState({x: 0, y: 0});
 
     const disabled = props.disabled ?? false;
-    
+
+    const r = 144.34;
+    const L = 381; 
+    const rS = 0.365 * controlViewLayout.height;
+    const xOffset = controlViewLayout.width / 2;
+    const yOffset = controlViewLayout.height * 0.615;
+
     const toRobotSpace = (pos: {x: number, y: number}) => {
+        // Scale coords
+        const newX = r/rS*(pos.x - xOffset);
+        const newY = r/rS*(-pos.y + yOffset);
+
+        // Constrain
+        const cXmin = Math.max(-L/3+newY/Math.sqrt(3), -(2*r+newY)/Math.sqrt(3));
+        const cXmax = Math.min(newX,L/3-newY/Math.sqrt(3), (2*r+newY)/Math.sqrt(3));
+        const cX = Math.max(cXmin, Math.min(newX, cXmax));
+        
+        const cY = Math.max(-L/(2*Math.sqrt(3)), Math.min(r, newY));
+
         return {
-            x: pos.x - controlViewLayout.width / 2, 
-            y: -pos.y + controlViewLayout.height * 0.6
+            x: cX, 
+            y: cY
         };
     }
+
+    const toScreenSpace = (pos: {x: number, y: number}) => {
+        // Scale coords
+        const newX = rS/r*pos.x + xOffset;
+        const newY = -rS/r*pos.y + yOffset;
+
+        return {
+            x: newX, 
+            y: newY
+        };
+    };
 
     const dragHandler = useCallback((event: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         const rx = gestureState.moveX - controlViewLayout.x;
         const ry = gestureState.moveY - controlViewLayout.y;
         const {x, y} = toRobotSpace({x: rx, y: ry});
-        setControlPosition({x, y});
+
         props.setTargetPosition({x, y, theta: 0});
     }, [controlViewLayout]);
+
+    const screenPos = toScreenSpace(props.targetPosition);
 
     return (
         <View 
@@ -58,8 +87,8 @@ const ControlView = (props: Props) => {
                 color={theme.colors.primary}
                 style={{
                     position: 'absolute',
-                    top: -controlPosition.y - 14 + controlViewLayout.height * 0.58,
-                    left: controlPosition.x - 14 + controlViewLayout.width * 0.5,
+                    top: screenPos.y - 14,
+                    left: screenPos.x - 14,
                     opacity: (controlViewLayout.width === 0 || controlViewLayout.height === 0) ? 0 : 1
 
                 }}

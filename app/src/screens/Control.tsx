@@ -41,6 +41,11 @@ const ControlScreen = (props: Props) => {
         setPosition(pos);
     };
 
+    const homeHandler = () => {
+        setTargetPosition({x: 0, y: 0, theta: 0});
+        home();
+    }
+
     return (
         <PageContainer>
             <ScrollView 
@@ -89,7 +94,7 @@ const ControlScreen = (props: Props) => {
                         justifyContent: 'space-evenly'
                     }}>
                         <Button mode="outlined" disabled={!isConnected || !isReady} onPress={calibrate}>CALIBRATE</Button>
-                        <Button mode="outlined" disabled={!isConnected || !isReady} onPress={home}>HOME</Button>
+                        <Button mode="outlined" disabled={!isConnected || !isReady} onPress={homeHandler}>HOME</Button>
                     </View>
                 </View>
             </ScrollView>
