@@ -80,7 +80,7 @@ export const RobotProvider = (props: {children: ReactElement}) => {
 
         if(maxSpeed === undefined || position === undefined || status === undefined) return;
 
-        // console.log(lastJsonMessage);
+        console.log(position)
         setMaxSpeed(maxSpeed);
         setPosition(position);
         setRobotState(status);

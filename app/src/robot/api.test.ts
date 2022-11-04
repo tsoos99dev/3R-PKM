@@ -1,7 +1,5 @@
 import express from 'express';
 import * as http from 'http';
-import { TouchableHighlightComponent } from 'react-native';
-import { ScreenStackHeaderLeftView } from 'react-native-screens';
 import * as WebSocket from 'ws';
 
 enum RobotState {
@@ -12,14 +10,15 @@ enum RobotState {
     ERROR = 4
 };
 
-declare type RobotPosition = {theta1: number, theta2: number, theta3: number};
+declare type MotorPosition = {theta1: number, theta2: number, theta3: number};
+declare type RobotPosition = {x: number, y: number, theta: number};
 
 let currentState = RobotState.UNKNOWN;
 setTimeout(() => {
     currentState = RobotState.READY;
 }, 5000);
 
-let currentPos = {
+let currentPos: MotorPosition = {
     theta1: -10, theta2: 30, theta3: 0.2
 };
 
@@ -117,9 +116,9 @@ const setSpeed = (speed: number) => {
 const setPosition = (pos: RobotPosition) => {
     currentState = RobotState.EXECUTING;
     setTimeout(() => {
-        currentPos.theta1 = pos.theta1;
-        currentPos.theta2 = pos.theta2;
-        currentPos.theta3 = pos.theta3;
+        currentPos.theta1 = pos.x;
+        currentPos.theta2 = pos.y;
+        currentPos.theta3 = pos.theta;
 
         if(readyTimer !== null) clearInterval(readyTimer);
         readyTimer = setTimeout(() => {

@@ -42,8 +42,8 @@ const ControlView = (props: Props) => {
             ref={controlViewRef}
             onLayout={(event) => {
                 const layout = event.nativeEvent.layout;
+                // @ts-ignore
                 controlViewRef.current?.measure((x, y, w, h, px, py) => {
-                    console.log(x, y, w, h);
                     setControlViewLayout({x: px, y: py, width: layout.width, height: layout.height});
                 })
             }}
@@ -76,7 +76,7 @@ const ControlView = (props: Props) => {
             >
                 <ControlPin
                     size={controlViewLayout.width} 
-                    color={"red"}
+                    // color={"red"}
                     style={{
                         opacity: 0
                     }}

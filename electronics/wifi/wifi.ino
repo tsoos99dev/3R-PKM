@@ -112,11 +112,12 @@ void checkStat() {
   unsigned char q3 = Serial.read();
 
   MotorPos motorPos = {q1, q2, q3};
-  RobotPos pos = forwardKinematics(motorPos);
+//  RobotPos pos = forwardKinematics(motorPos);
 
-  stat["x"] = pos.x;
-  stat["y"] = pos.y;
-  stat["theta"] = pos.theta;
+  
+  stat["theta1"] = motorPos.q1;
+  stat["theta2"] = motorPos.q2;
+  stat["theta3"] = motorPos.q3;
   stat["status"] = Serial.read();
   Serial.read();  // Pop EOL
 }
@@ -144,9 +145,9 @@ void setup() {
 //  Serial.println("Configuring AP...");
 //  Serial.println(WiFi.softAP("3R-PKM", "parallelrobot") ? "Ready" : "Failed!");    
 
-  stat["position"]["x"] = 0.0;
-  stat["position"]["y"] = 0.0;
-  stat["position"]["theta"] = 0.0;
+  stat["position"]["theta1"] = 0.0;
+  stat["position"]["theta2"] = 0.0;
+  stat["position"]["theta3"] = 0.0;
   stat["maxSpeed"] = 0.0;
   stat["status"] = UNKNOWN;
   
