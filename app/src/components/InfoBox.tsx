@@ -1,18 +1,18 @@
 import React from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
-import { RobotPosition } from "../robot/api";
+import { MotorPosition, RobotPosition } from "../robot/api";
 import { formatParam } from "../robot/util";
 
 type Props = {
-    position: RobotPosition | null,
+    position: MotorPosition | null,
     targetPosition: RobotPosition | null,
 };
 
 const InfoBox = (props: Props) => {
-    const xString = formatParam(props.position?.x);
-    const yString = formatParam(props.position?.y);
-    const thetaString = formatParam(props.position?.theta);
+    const theta1String = formatParam(props.position?.theta1);
+    const theta2String = formatParam(props.position?.theta2);
+    const theta3String = formatParam(props.position?.theta3);
 
     const xTargetString = formatParam(props.targetPosition?.x);
     const yTargetString = formatParam(props.targetPosition?.y);
@@ -33,21 +33,35 @@ const InfoBox = (props: Props) => {
                     flexDirection: 'row'
                 }}>
                     <View style={{
-                        flex: 1
                     }}>
                         <Text variant="bodySmall">Axis</Text>
-                        <Text variant="headlineSmall">X:</Text>
-                        <Text variant="headlineSmall">Y:</Text>
-                        <Text variant="headlineSmall">{'\u03B8'}:</Text>
+                        <Text variant="headlineSmall">{'\u03B8'}1:</Text>
+                        <Text variant="headlineSmall">{'\u03B8'}2:</Text>
+                        <Text variant="headlineSmall">{'\u03B8'}3:</Text>
                     </View>
                     <View style={{
                         flex: 1,
                         alignItems: 'flex-end'
                     }}>
                         <Text variant="bodySmall">Current</Text>
-                        <Text variant="headlineSmall">{xString}</Text>
-                        <Text variant="headlineSmall">{yString}</Text>
-                        <Text variant="headlineSmall">{thetaString}</Text>
+                        <Text variant="headlineSmall">{theta1String}</Text>
+                        <Text variant="headlineSmall">{theta2String}</Text>
+                        <Text variant="headlineSmall">{theta3String}</Text>
+                    </View>
+                    <View style={{
+                        marginHorizontal: 8
+                    }}>
+                        <Text variant="bodySmall" style={{textAlign: "right"}}>Unit</Text>
+                        <Text variant="headlineSmall"> {'\u00b0'}</Text>
+                        <Text variant="headlineSmall"> {'\u00b0'}</Text>
+                        <Text variant="headlineSmall"> {'\u00b0'}</Text>
+                    </View>
+                    <View style={{
+                    }}>
+                        <Text variant="bodySmall">Axis</Text>
+                        <Text variant="headlineSmall">X:</Text>
+                        <Text variant="headlineSmall">Y:</Text>
+                        <Text variant="headlineSmall">{'\u03B8'}:</Text>
                     </View>
                     <View style={{
                         flex: 1,

@@ -12,7 +12,7 @@ enum RobotState {
     ERROR = 4
 };
 
-declare type RobotPosition = {x: number, y: number, theta: number};
+declare type RobotPosition = {theta1: number, theta2: number, theta3: number};
 
 let currentState = RobotState.UNKNOWN;
 setTimeout(() => {
@@ -20,7 +20,7 @@ setTimeout(() => {
 }, 5000);
 
 let currentPos = {
-    x: -10, y: 30, theta: 0.2
+    theta1: -10, theta2: 30, theta3: 0.2
 };
 
 let currentSpeed = 5;
@@ -91,9 +91,9 @@ server.listen(process.env.PORT || 8999, () => {
 const home = () => {
     currentState = RobotState.EXECUTING;
     setTimeout(() => {
-        currentPos.x = 0;
-        currentPos.y = 0;
-        currentPos.theta = 0;
+        currentPos.theta1 = 0;
+        currentPos.theta2 = 0;
+        currentPos.theta3 = 0;
         currentState = RobotState.READY;
     }, 2000);
 };
@@ -101,9 +101,9 @@ const home = () => {
 const calibrate = () => {
     currentState = RobotState.CALIBRATING;
     setTimeout(() => {
-        currentPos.x = 0;
-        currentPos.y = 0;
-        currentPos.theta = 0;
+        currentPos.theta1 = 0;
+        currentPos.theta2 = 0;
+        currentPos.theta3 = 0;
         currentState = RobotState.READY;
     }, 3000);
 };
@@ -117,9 +117,9 @@ const setSpeed = (speed: number) => {
 const setPosition = (pos: RobotPosition) => {
     currentState = RobotState.EXECUTING;
     setTimeout(() => {
-        currentPos.x = pos.x;
-        currentPos.y = pos.y;
-        currentPos.theta = pos.theta;
+        currentPos.theta1 = pos.theta1;
+        currentPos.theta2 = pos.theta2;
+        currentPos.theta3 = pos.theta3;
 
         if(readyTimer !== null) clearInterval(readyTimer);
         readyTimer = setTimeout(() => {

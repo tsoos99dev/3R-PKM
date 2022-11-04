@@ -10,7 +10,9 @@ export enum RobotState {
     ERROR = 4
 };
 
+export declare type MotorPosition = {theta1: number, theta2: number, theta3: number};
 export declare type RobotPosition = {x: number, y: number, theta: number};
+
 export declare type RobotAPIResponse = {
     isConnecting: boolean,
     isConnected: boolean,
@@ -20,7 +22,7 @@ export declare type RobotAPIResponse = {
     isCalibrating: boolean,
     isReady: boolean,
     isExecuting: boolean,
-    position: RobotPosition | null,
+    position: MotorPosition | null,
     maxSpeed: number | null,
     setPosition: (pos: RobotPosition) => void,
     setMaxSpeed: (speed: number) => void,
@@ -54,14 +56,12 @@ export const RobotContext = React.createContext<RobotAPIResponse>({
 
 export const RobotProvider = (props: {children: ReactElement}) => {
     const [shouldConnect, setShouldConnect] = useState(false);
-    const [position, setPosition] = useState<RobotPosition | null>(null);
+    const [position, setPosition] = useState<MotorPosition | null>(null);
     const [maxSpeed, setMaxSpeed] = useState<number | null>(null);
     const [robotState, setRobotState] = useState(RobotState.UNKNOWN);
 
     const {
-        sendMessage, 
         sendJsonMessage,
-        lastMessage, 
         lastJsonMessage,
         readyState,
     } = useWebSocket(robotSocketUrl, {
@@ -80,7 +80,7 @@ export const RobotProvider = (props: {children: ReactElement}) => {
 
         if(maxSpeed === undefined || position === undefined || status === undefined) return;
 
-        console.log(lastJsonMessage);
+        // console.log(lastJsonMessage);
         setMaxSpeed(maxSpeed);
         setPosition(position);
         setRobotState(status);
