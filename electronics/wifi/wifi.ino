@@ -6,6 +6,15 @@
 
 #define F_CPU 80000000L
 
+#define COMMAND_BUFFER_LENGTH 16
+#define MESSAGE_BUFFER_LENGTH 128
+
+typedef union
+{
+  float number;
+  uint8_t bytes[4];
+} float4byte_t;
+
 enum RobotState { 
   UNKNOWN = 0,
   READY = 1,
@@ -14,21 +23,10 @@ enum RobotState {
   ERROR = 4
 };
 
-WebSocketsServer webSocket = WebSocketsServer(81);
-
-char message[256];
-DynamicJsonDocument stat(1024);
-DynamicJsonDocument command(1024);
-
-bool waitingForStat = false;
-
-ArduinoQueue<String> commandQueue(32);
-
-
 typedef struct {
-  unsigned char q1;
-  unsigned char q2;
-  unsigned char q3;
+  uint8_t q1;
+  uint8_t q2;
+  uint8_t q3;
 } MotorPos;
 
 
@@ -37,6 +35,18 @@ typedef struct {
   float y;
   float theta;
 } RobotPos;
+
+WebSocketsServer webSocket = WebSocketsServer(81);
+
+char commandBuffer[COMMAND_BUFFER_LENGTH];
+char message[MESSAGE_BUFFER_LENGTH];
+uint8_t currentUser = 0;
+StaticJsonDocument<32> stat;
+StaticJsonDocument<32> command;
+
+bool waitingForStat = false;
+
+ArduinoQueue<String> commandQueue(32);
 
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
@@ -55,19 +65,47 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 //            Serial.printf("[%u] get Text: %s\n", num, payload);
 
       if(commandQueue.isFull()) return;
+
+      if(!commandQueue.isEmpty() && currentUser != num) return;
+
+      currentUser = num;
+      
       deserializeJson(command, payload);
 
       String commandType = command["type"];
       if(commandType == "setPosition") {
-        float theta1 = command["position"]["theta1"];
-        float theta2 = command["position"]["theta2"];
-        float theta3 = command["position"]["theta3"];
-        MotorPos motorPos = {theta1, theta2, theta3};
-        commandQueue.enqueue("p" + String(motorPos.q1) + String(motorPos.q2) + String(motorPos.q3) + "\n");
+        float4byte_t q1;
+        q1.number = command["position"]["theta1"];
+        float4byte_t q2;
+        q2.number = command["position"]["theta2"];
+        float4byte_t q3;
+        q3.number = command["position"]["theta3"];
+
+        snprintf(commandBuffer, COMMAND_BUFFER_LENGTH, "p%c%c%c%c%c%c%c%c%c%c%c%c\n", 
+          q1.bytes[0],
+          q1.bytes[1],
+          q1.bytes[2],
+          q1.bytes[3],
+          q2.bytes[0],
+          q2.bytes[1],
+          q2.bytes[2],
+          q2.bytes[3],
+          q3.bytes[0],
+          q3.bytes[1],
+          q3.bytes[2],
+          q3.bytes[3]
+        );
+        commandQueue.enqueue(String(commandBuffer));
       } else if(commandType == "setSpeed") {
-        command["maxSpeed"];
-        unsigned char maxSpeed;
-        commandQueue.enqueue("m" + String(maxSpeed) + "\n");
+        float4byte_t maxSpeed;
+        maxSpeed.number = command["maxSpeed"];
+        snprintf(commandBuffer, COMMAND_BUFFER_LENGTH, "m%c%c%c%c\n", 
+          maxSpeed.bytes[0],
+          maxSpeed.bytes[1],
+          maxSpeed.bytes[2],
+          maxSpeed.bytes[3]
+        );
+        commandQueue.enqueue(String(commandBuffer));
       }
       else if(commandType == "reset") {
         commandQueue.enqueue("r\n");
@@ -95,15 +133,27 @@ void checkStat() {
 
   waitingForStat = false;
 
-  unsigned char q1 = Serial.read();
-  unsigned char q2 = Serial.read();
-  unsigned char q3 = Serial.read();
+  float4byte_t q1;
+  q1.bytes[0] = Serial.read();;
+  q1.bytes[1] = Serial.read();;
+  q1.bytes[2] = Serial.read();;
+  q1.bytes[3] = Serial.read();;
 
-  MotorPos motorPos = {q1, q2, q3};
+  float4byte_t q2;
+  q2.bytes[0] = Serial.read();;
+  q2.bytes[1] = Serial.read();;
+  q2.bytes[2] = Serial.read();;
+  q2.bytes[3] = Serial.read();;
+
+  float4byte_t q3;
+  q3.bytes[0] = Serial.read();;
+  q3.bytes[1] = Serial.read();;
+  q3.bytes[2] = Serial.read();;
+  q3.bytes[3] = Serial.read();;
   
-  stat["theta1"] = motorPos.q1;
-  stat["theta2"] = motorPos.q2;
-  stat["theta3"] = motorPos.q3;
+  stat["theta1"] = q1.number;
+  stat["theta2"] = q2.number;
+  stat["theta3"] = q3.number;
   stat["status"] = Serial.read();
   Serial.read();  // Pop EOL
 }
