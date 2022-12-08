@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "general.h"
 #include "USI_UART.h"
 
 
@@ -39,10 +40,6 @@
 #if (UART_TX_BUFFER_SIZE & UART_TX_BUFFER_MASK)
     #error TX buffer size is not a power of 2
 #endif
-
-/* General defines */
-#define TRUE                      1
-#define FALSE                     0
 
 //********** Static Variables **********//
 

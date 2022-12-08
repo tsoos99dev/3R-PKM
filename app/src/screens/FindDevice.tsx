@@ -1,56 +1,58 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import {
   Button,
-  Text,
-  useTheme
+  Text
 } from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { StackNavigation } from '../../App';
 import PageContainer from '../components/PageContainer';
 import RoboIcon from '../components/RoboIcon';
-
-const socketUrl = 'wss://echo.websocket.org';
+import RobotStatus from '../components/RobotStatus';
+import { useRobot } from '../robot/api';
 
 
 type Props = {
-    connect: () => void,
-    isConnecting: boolean,
-    isConnected: boolean
 }
 
 
 const FindDeviceScreen = (props: Props) => {
-    const theme = useTheme();
     const navigation = useNavigation<StackNavigation>();
+    const {
+        isConnected, 
+        isConnecting, 
+        isCalibrating,
+        isError,
+        isExecuting,
+        isIdle,
+        isReady,
+        connect
+    } = useRobot();
 
     useEffect(() => {
-        if(props.isConnected) {
+        if(isConnected) {
             navigation.navigate('Control');
         }
-    }, [props.isConnected]);
+    }, [isConnected]);
 
-    const connString = props.isConnecting ? "Connecting..." : "Disconnected";
-    
     return (
         <PageContainer>
             <View style={{
                 flex: 1,
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                padding: 16
             }}>
-                <View style={{
-                    alignItems: 'center',
-                }}>
-                    <Text variant='headlineLarge'>3R-PKM</Text>
-                    <Text 
-                        variant='bodyLarge' 
-                        style={{color: theme.colors.textSecondary}}
-                    >
-                        {connString}
-                    </Text>
-                </View>
+                <RobotStatus 
+                isConnected={isConnected}
+                isConnecting={isConnecting}    
+                isCalibrating={isCalibrating}
+                isError={isError}
+                isExecuting={isExecuting}
+                isIdle={isIdle}
+                isReady={isReady}
+                />
                 <View style={{
                         justifyContent: 'center',
                 }}>
@@ -62,17 +64,18 @@ const FindDeviceScreen = (props: Props) => {
                     }}>
                         <Button 
                             mode="contained"
-                            disabled={props.isConnecting}
-                            loading={props.isConnecting}
-                            onPress={() => props.connect()}
+                            disabled={isConnecting}
+                            loading={isConnecting}
+                            onPress={() => {
+                                isConnected ? navigation.navigate('Control') : connect()
+                            }}
                         >
-                            CONNECT
+                            {isConnected ? "READY!" : "CONNECT"}
                         </Button>
                     </View>
                 </View>
                 <View style={{
                     flexDirection: 'row',
-                    justifyContent:'flex-start',
                     alignItems: 'center'
                 }}>
                     <Icon 
@@ -83,7 +86,9 @@ const FindDeviceScreen = (props: Props) => {
                             marginRight: 8
                         }}
                     />
-                    <Text variant='bodyMedium'>
+                    <Text variant='bodyMedium' style={{
+                        flex: 1
+                    }}>
                         Please make sure your device is connected to 
                         the robot's Wi-Fi
                     </Text>

@@ -9,40 +9,55 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define F_CPU 8000000L
-#include <util/delay.h>
-
 #include "USI_UART.h"
+#include "robot.h"
 
 
-#define RX_BUFFER_SIZE 8
-#define RX_BUFFER_MASK (RX_BUFFER_SIZE - 1)
-
-
-unsigned char RX_Buf[RX_BUFFER_SIZE];
+void parseCommand() {
+    if(USI_UART_PeekAtLastByte() == '\n') {
+        unsigned char command = USI_UART_ReceiveByte();
+        unsigned char q1, q2, q3;
+        unsigned char maxSpeed;
+        
+        switch(command) {
+            case 'r':
+                resetRobot();
+                break;
+            case 's':
+                sendStatus();
+                break;
+            case 'c':
+                calibrate();
+                break;
+            case 'h':
+                home();
+                break;
+            case 'p':
+                q1 = USI_UART_ReceiveByte();
+                q2 = USI_UART_ReceiveByte();
+                q3 = USI_UART_ReceiveByte();
+                setPosition(q1, q2, q3);
+                break;
+            case 'm':
+                maxSpeed = USI_UART_ReceiveByte();
+                setMaxSpeed(maxSpeed);
+                break;
+        }
+        
+        USI_UART_ReceiveByte(); // Pop EOL
+    }
+}
 
 
 int main(void) {
     USI_UART_FlushBuffers();
     USI_UART_InitialiseReceiver();
     
-    sei();
+    robotInit();
+    calibrate();
     
     while(1) 
     {   
-        if(USI_UART_GetStatus().Reception_Buffer_Overflow) {
-            DDRB |= (1<<PB0);
-            PORTB ^= (1<<PB0);
-            USI_UART_FlushBuffers();
-        }
-        
-        if(USI_UART_PeekAtLastByte() == '\n') 
-        {
-            while(USI_UART_DataInReceiveBuffer())
-            {
-                USI_UART_TransmitByte(USI_UART_ReceiveByte());            
-            }
-        }
+        parseCommand();
     }
 }
-

@@ -5,8 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { Appbar, MD3DarkTheme as DefaultTheme, Provider as PaperProvider, Text } from 'react-native-paper';
 import FindDeviceScreen from './src/screens/FindDevice';
-import { View } from 'react-native';
-import { useRobot } from './src/robot/api';
+import { RobotProvider, useRobot } from './src/robot/api';
 import ControlScreen from './src/screens/Control';
 
 const theme = {
@@ -51,68 +50,28 @@ function CustomNavigationBar({options, navigation, back}: any) {
 
 
 const App = () => {
-  const {
-    connect, 
-    isConnecting, 
-    isConnected,
-    isBusy,
-    isCalibrating,
-    isError,
-    isReady,
-    isExecuting,
-    position,
-    maxSpeed,
-    setTargetPosition,
-    setMaxSpeed,
-    home,
-    calibrate
-  } = useRobot();
-
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
+        <RobotProvider>
         <Stack.Navigator
-          initialRouteName="Control"
+          initialRouteName="Find"
           screenOptions={{
-            header: (props) => <CustomNavigationBar {...props} />
+            header: (props) => null // <CustomNavigationBar {...props} />
           }}
         >
           <Stack.Screen 
             name="Find" 
             options={{ title: 'Find device' }}
-          >
-            {(props) => {
-              return <FindDeviceScreen 
-                {...props} 
-                connect={connect}
-                isConnecting={isConnecting}
-                isConnected={isConnected}
-              />
-            }}
-          </Stack.Screen>
+            component={FindDeviceScreen}
+          />
           <Stack.Screen 
             name="Control" 
             options={{ title: 'Control' }}
-          >
-            {(props) => {
-              return <ControlScreen 
-                {...props}
-                isBusy={isBusy}
-                isCalibrating={isCalibrating}
-                isError={isError}
-                isExecuting={isExecuting}
-                isReady={isReady}
-                isConnected={isConnected}
-                position={position}
-                maxSpeed={maxSpeed}
-                setTargetPosition={setTargetPosition}
-                setMaxSpeed={setMaxSpeed}
-                home={home}
-                calibrate={calibrate}
-              />
-            }}
-          </Stack.Screen>
+            component={ControlScreen}
+          />
         </Stack.Navigator>
+        </RobotProvider>
       </PaperProvider>
     </NavigationContainer>
   );
